@@ -1,0 +1,72 @@
+name: Solo Habit Daily Notifications
+
+on:
+  schedule:
+    - cron: '30 2 * * *'   # 8:00 AM IST (UTC+5:30)
+    - cron: '0 18 * * *'   # 11:30 PM IST
+    - cron: '20 18 * * *'  # 11:50 PM IST — PUNISHMENT
+    - cron: '30 18 * * *'  # Midnight IST
+  workflow_dispatch:        # manual trigger button
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Morning Reminder
+        if: github.event.schedule == '30 2 * * *'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
+          -d chat_id="${{ secrets.CHAT_ID }}" \
+          -d parse_mode="HTML" \
+          -d text="⚔️ <b>SOLO HABIT — ARISE HUNTER!</b>
+
+🌅 Good morning! Your daily quests await.
+
+Open your habit tracker and complete your quests:
+👉 https://harshalspatil776-lab.github.io/Solo-Habit/
+
+<i>The System is watching your progress.</i> 🔥"
+
+      - name: Night Warning
+        if: github.event.schedule == '0 18 * * *'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
+          -d chat_id="${{ secrets.CHAT_ID }}" \
+          -d parse_mode="HTML" \
+          -d text="⚠️ <b>SYSTEM WARNING — 30 MINUTES REMAINING</b>
+
+🌙 30 minutes until midnight!
+Have you completed your quests today, Hunter?
+
+👉 https://harshalspatil776-lab.github.io/Solo-Habit/
+
+<i>Complete them now before it's too late!</i>"
+
+      - name: Punishment Warning
+        if: github.event.schedule == '20 18 * * *'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
+          -d chat_id="${{ secrets.CHAT_ID }}" \
+          -d parse_mode="HTML" \
+          -d text="💀 <b>SYSTEM ALERT</b>
+
+⚠️ FAILURE TO ACHIEVE TASKS WILL RESULT IN PUNISHMENT ⚠️
+
+You have 10 minutes remaining, Hunter.
+
+👉 https://harshalspatil776-lab.github.io/Solo-Habit/"
+
+      - name: Midnight Punishment
+        if: github.event.schedule == '30 18 * * *'
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
+          -d chat_id="${{ secrets.CHAT_ID }}" \
+          -d parse_mode="HTML" \
+          -d text="💀 <b>PUNISHMENT ADMINISTERED</b>
+
+You have failed your quests today.
+The System is disappointed, Hunter.
+
+Do better tomorrow. ARISE. ⚔️
+
+— Solo Habit System"
